@@ -145,7 +145,7 @@
 
 2.  rehash
 
-    ![img](C:/Users/qqq/AppData/Local/Temp/企业微信截图_16254702169746.png)
+    ![img](https://i.loli.net/2021/07/05/j5dWXxDs12cSvyK.png)
 
     ​	当前服务器没有执行BGSAVE命令或者BGREWRITEAOF命令，并且哈希表的负载因子大于等于1，进行拓展操作；当前服务器如果有执行BGSAVE命令或者BGREWRITEAOF命令，并且哈希表的负载因子大于等于5，进行拓展操作。
 
@@ -153,19 +153,29 @@
 
     -   rehash前的字典表
 
-    ![img](C:/Users/qqq/AppData/Local/Temp/企业微信截图_16254703485553.png)
+    ![img](https://i.loli.net/2021/07/05/3Ncyp7xSEIkOfbJ.png)
 
     -   计算拓展后ht[1]的空间，ht[0].used * 2  = 4 * 2 = 8, 8刚好是2的3次方，ht[1]分配空间之后如图：
 
-    ![img](C:/Users/qqq/AppData/Local/Temp/企业微信截图_16254706356397.png)
+    ![img](https://i.loli.net/2021/07/05/zY4r6bQHLIwWBx2.png)
 
     -   将ht[0]里的键值对rehash到ht[1]里面，如图：
 
-    ![img](C:/Users/qqq/AppData/Local/Temp/企业微信截图_16254707251599.png)
+    ![img](https://i.loli.net/2021/07/05/NyfkY849bmeR2iA.png)
 
     -   ht[0]设置为ht[1]，ht[1]设置为空白的哈希表，如图：
 
-    ![img](C:/Users/qqq/AppData/Local/Temp/企业微信截图_16254708757557.png)
+    ![img](https://i.loli.net/2021/07/05/yazZoVcx7vHGJiP.png)
+
+    -   渐进式rehash
+
+        (1)为ht[1]分配空间，让字典同时持有ht[0]和ht[1]两个表；
+
+        (2)在字典中维持一个索引计数器变量rehashidx，设置为0，表示rehash开始；
+
+        (3)在rehash期间，每次对字典进行增删改查操作时，顺带将ht[0]哈希表在rehashidx索引上的所有键值对rehash至ht[1]，当rehash工作完成后，程序将rehashidx值增一；
+
+        (4)完成所有rehash操作，程序将rehashidx属性值设置为-1，表示rehash操作已经完成
 
 3.  其他
 
