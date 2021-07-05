@@ -175,7 +175,9 @@
 
         (3)在rehash期间，每次对字典进行增删改查操作时，顺带将ht[0]哈希表在rehashidx索引上的所有键值对rehash至ht[1]，当rehash工作完成后，程序将rehashidx值增一；
 
-        (4)完成所有rehash操作，程序将rehashidx属性值设置为-1，表示rehash操作已经完成
+        (4)完成所有rehash操作，程序将rehashidx属性值设置为-1，表示rehash操作已经完成；
+
+        渐进式rehash可以保证在进行rehash的同时，不影响用户操作。
 
 3.  其他
 
