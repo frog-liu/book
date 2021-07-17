@@ -184,3 +184,88 @@
     -   Redis使用MurmurHash2算法计算键的哈希值
     -   Redis使用**链地址法**解决哈希冲突，放在链表头
 
+##### 跳表
+
+1.  结构定义
+
+    -   跳表节点
+
+        ```c
+        typedef struct zskiplistNode {
+            // 层
+            struct zskiplistLevel {
+                // 前进指针
+                struct zskiplistNode *forward;
+                // 跨度
+                unsigned int span;
+            } level[];
+            // 后退节点
+            struct zskiplistNode *backward;
+            // 分值
+            double score;
+            // 成员对象
+            robj *obj;
+        } zskiplistNode;
+        ```
+
+    -   跳表
+
+        ```c
+        typedef struct zskiplist {
+            // 表头节点和表尾节点
+            struct zskiplistNode *head, *tail;
+            // 表中节点的数量
+            unsigned long length;
+            // 表中层数最大的节点层数
+            int level;
+        } zskiplist;
+        ```
+
+##### 整数集合
+
+​	当一个集合数量不多且只包含整数数值元素时，Redis就会使用整数集合。
+
+1.  结构定义
+
+    ```c
+    typedef struct intset {
+        // 编码方式
+        uint32_t encoding;
+        // 元素数量
+        uint32_t length;
+        // 保存元素的数组--从小到大排列且不重复
+        int8_t contents[];
+    } intset;
+    ```
+
+2.  升级操作
+
+    contents数组支持int8_t类型数据，当集合添加int16_t类型数据时，会进行升级操作：
+
+    -   根据新元素的类型，拓展整数集合底层数组的空间大小，并未新元素分配空间；
+    -   将底层数组现有的元素全部转换为新元素的类型，并维持底层数组的有序性不变；
+    -   将新元素添加到底层数组里面
+
+##### 压缩列表
+
+1.  组成
+
+    | zlbytes | zltail | zllen | entry1 | entry2 | ...... | entryN | zlend |
+    | ------- | ------ | ----- | ------ | ------ | ------ | ------ | ----- |
+
+    | 名称    | 类型     | 长度  | 说明                                                         |
+    | ------- | -------- | ----- | ------------------------------------------------------------ |
+    | zlbytes | unit32_t | 4节点 | 记录整个压缩表占用的内存字节数：对压缩列表进行内存重新分配或者计算zlend位置时使用 |
+    | zltail  | unit32_t | 4节点 | 记录表尾节点距离压缩列表起始位置有多少字节：快速定位表尾节点地址 |
+    | zllen   | unit16_t | 2节点 | 当值小于UNIT16_MAX时，记录节点数量；                         |
+    | entryX  | 列表节点 | 不定  | 压缩列表包含的各个节点                                       |
+    | zlend   | unit8_t  | 1节点 | 特殊值0xFF，标记压缩列表的末端                               |
+
+2.  压缩列表节点的组成
+
+    | previous_entry_length | encoding | content |
+    | --------------------- | -------- | ------- |
+
+    
+
+3.  
