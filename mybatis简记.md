@@ -292,7 +292,7 @@
    ```xml
    <select id="getStudentById" resultType="com.demo.Student">
    		select * from student where id IN 
-       <foreach item = "item" index = "index" collect="list"
+       <foreach item = "item" index = "index" collection="list"
        		open = "(" close = ")" separator = ",">
            #{item}
        </foreach>
